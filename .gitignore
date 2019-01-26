@@ -1,0 +1,4 @@
+/cache/*
+/storage/*
+.env
+.DS_Store
