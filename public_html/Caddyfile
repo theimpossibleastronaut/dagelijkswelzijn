@@ -1,0 +1,7 @@
+localhost:8080
+rewrite {
+	ext !.png !.jpg !.css !.js !.mjs !.ico
+	to /index.php
+}
+
+fastcgi / 127.0.0.1:9000 php

@@ -10,4 +10,12 @@ The name is Dutch, and for now my focus lies with friends and peers, but there w
 
 The service would be as simple as that I can make it without sacrificing for security. All tech is written in PHP and should adhere to modern standords. I will take all steps possible to my knowledge to keep your data secure.
 
-For now this serwice should be git clonable and be runnable by pointing some kind of webserver to the public_html folder. Data storage is outside of the public_html so make sre your webserver can access this.
+For now this service should be git clonable and be runnable by pointing some kind of webserver to the public_html folder. Data storage is outside of the public_html so make sre your webserver can access this.
+
+## Running
+Run php-fpm. On os x, that's done by installing php 7.2 and caddy server for example.
+
+```brew install php@7.2```
+```brew services start php@7.2```
+```cd public_html```
+```caddy```
