@@ -9,10 +9,10 @@ class Controller
 	function __construct() {
 		$this->router = new Router();
 		$this->router->addRoute( '/', 'HomeView', 100 )
-					 ->addRoute( '/login', 'LoginView' ) /* Non existing yet */
+					 ->addRoute( '/login', 'LoginView' )
 		;
 
-		$this->route();
+		$this->route( $_SERVER[ 'REQUEST_URI' ] );
 	}
 
 	public function route( $path = "/" ) {
