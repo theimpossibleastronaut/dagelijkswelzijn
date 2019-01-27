@@ -37,10 +37,11 @@ class Template
 			if ( isset( $dwNode->parentNode ) ) {
 				$nodeOutput = null;
 
-				$methodName = "parse" . ucfirst( substr( $dwNode->nodeName, 3) );
+				$className = "\\dw\\template\\" . ucfirst( substr( $dwNode->nodeName, 3) ) . "Action";
 
-				if ( method_exists( $this, $methodName ) ) {
-					$nodeOutput = $this->$methodName( $dwNode );
+				if ( class_exists( $className ) ) {
+					$action = new $className;
+					$nodeOutput = $action->parse( $dwNode );
 				}
 
 				if ( !is_null( $nodeOutput ) ) {
@@ -69,21 +70,6 @@ class Template
 		}
 
 		return ( $returnHTML === true ) ? $this->doc->saveHTML() : $this->doc->saveXML();
-	}
-
-	/**
-	 * Parse dw:Template tags to allow simple includes
-	 * @param  \DOMElement $node The node to be replaced with the Template contents
-	 * @return string 	Parsed string
-	 */
-	protected function parseTemplate( \DOMElement $node ): string {
-		if ( $node->hasAttribute( 'src' ) ) {
-			$attr = (string) $node->getAttribute( 'src' );
-			$template = new Template( $attr );
-			return $template->render( true, false );
-		}
-
-		return null;
 	}
 }
 ?>

@@ -171,10 +171,11 @@ class WAF
 			}
 		}
 
-		if ( count( $_SESSION[ "hit_history" ] ) > 9 ) {
-			$_SESSION[ "hit_history" ] = array_slice( $_SESSION[ "hit_history" ], -10 );
+		// Impose a rate limit of 7 requests per 30 seconds
+		if ( count( $_SESSION[ "hit_history" ] ) > 6 ) {
+			$_SESSION[ "hit_history" ] = array_slice( $_SESSION[ "hit_history" ], -7 );
 
-			if ( ( $_SESSION[ "hit_history" ][ 9 ] - $_SESSION[ "hit_history" ][ 0 ] ) < 30 ) {
+			if ( ( $_SESSION[ "hit_history" ][ 6 ] - $_SESSION[ "hit_history" ][ 0 ] ) < 30 ) {
 				$ruleMatches[] = self::RATE_LIMIT_RULE;
 			}
 
