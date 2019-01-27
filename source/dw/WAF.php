@@ -59,6 +59,7 @@ class WAF
 	const REQUEST_METHOD_RULE = "REQUEST METHOD";
 	const QUERY_STRING_TOOLONG_RULE = "QUERY STRING TOO LONG";
 	const QUERY_STRING_BADCHARS_RULE = "QUERY STRING BAD CHARACTERS";
+	const RATE_LIMIT_RULE = "RATE LIMIT HIT";
 
 	function __construct() {
 		$scanDetails = $this->scanRequest();
@@ -71,6 +72,13 @@ class WAF
 	 * @return array Matched rules
 	 */
 	protected function scanRequest(): array {
+
+		if ( !isset( $_SESSION[ "hit_history" ] ) ) {
+			$_SESSION[ "hit_history" ] = [];
+		}
+
+		$_SESSION[ "hit_history" ][] = time();
+
 		$ruleMatches = [];
 
 		$matches = [];
@@ -161,6 +169,15 @@ class WAF
 			if ( preg_match( "/^.*(" . self::SQL_FILTER . ").*/i", $filterable, $matches ) ) {
 				$ruleMatches[] = self::SQL_RULE;
 			}
+		}
+
+		if ( count( $_SESSION[ "hit_history" ] ) > 9 ) {
+			$_SESSION[ "hit_history" ] = array_slice( $_SESSION[ "hit_history" ], -10 );
+
+			if ( ( $_SESSION[ "hit_history" ][ 9 ] - $_SESSION[ "hit_history" ][ 0 ] ) < 30 ) {
+				$ruleMatches[] = self::RATE_LIMIT_RULE;
+			}
+
 		}
 
 		return $ruleMatches;

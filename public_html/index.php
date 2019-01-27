@@ -10,6 +10,8 @@
 		https://github.com/theimpossibleastronaut/dagelijkswelzijn
 	 */
 
+	session_start();
+
 	require_once( "../source/bootstrap.php" );
 	new dw\Controller;
 ?>
