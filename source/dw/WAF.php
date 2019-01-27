@@ -39,6 +39,11 @@ class WAF
 	const REMOTE_FILE_FILTER = "%00|(?:((?:ht|f)tp(?:s?)|file|webdav)\:\/\/|~\/|\/).*\.\w{2,3}|(?:((?:ht|f)tp(?:s?)|file|webdav)%3a%2f%2f|%7e%2f%2f).*\.\w{2,3}";
 
 	/**
+	 * Some bad chars that aren't allowed
+	 */
+	const QUERY_STRING_BADCHARS_FILTER = "'|\*";
+
+	/**
 	 * Block some request methods
 	 */
 	const REQUEST_METHOD_FILTER = "TRACE|DELETE|TRACK";
@@ -53,6 +58,7 @@ class WAF
 	const REMOTE_FILE_RULE = "REMOTE FILE";
 	const REQUEST_METHOD_RULE = "REQUEST METHOD";
 	const QUERY_STRING_TOOLONG_RULE = "QUERY STRING TOO LONG";
+	const QUERY_STRING_BADCHARS_RULE = "QUERY STRING BAD CHARACTERS";
 
 	function __construct() {
 		$scanDetails = $this->scanRequest();
@@ -84,9 +90,39 @@ class WAF
 			$userAgent = $_SERVER[ "HTTP_USER_AGENT" ];
 		}
 
-		$queryString = "";
+		$filterables = [];
 		if ( isset( $_SERVER[ "QUERY_STRING" ] ) ) {
-			$queryString = $_SERVER[ "QUERY_STRING" ];
+			$filterables[] = $_SERVER[ "QUERY_STRING" ];
+
+			if ( strlen( $_SERVER[ "QUERY_STRING" ] ) > 255 ) {
+				$ruleMatches[] = self::QUERY_STRING_TOOLONG_RULE;
+			}
+
+			if ( preg_match( "/^.*(" . self::QUERY_STRING_BADCHARS_FILTER . ").*/i", $_SERVER[ "QUERY_STRING" ], $matches ) ) {
+				$ruleMatches[] = self::QUERY_STRING_BADCHARS_RULE;
+			}
+		}
+
+		if ( isset( $_SERVER[ "REQUEST_URI" ] ) ) {
+			$filterables[] = $_SERVER[ "REQUEST_URI" ];
+
+			if ( strlen( $_SERVER[ "REQUEST_URI" ] ) > 255 ) {
+				$ruleMatches[] = self::QUERY_STRING_TOOLONG_RULE;
+			}
+
+			if ( preg_match( "/^.*(" . self::QUERY_STRING_BADCHARS_FILTER . ").*/i", $_SERVER[ "REQUEST_URI" ], $matches ) ) {
+				$ruleMatches[] = self::QUERY_STRING_BADCHARS_RULE;
+			}
+		}
+
+		foreach ( $_GET as $k => $v ) {
+			$filterables[] = $k;
+			$filterables[] = $v;
+		}
+
+		foreach ( $_POST as $k => $v ) {
+			$filterables[] = $k;
+			$filterables[] = $v;
 		}
 
 		if ( preg_match( "/^(" . self::REQUEST_METHOD_FILTER . ")/i", $reqMethod, $matches ) ) {
@@ -105,28 +141,26 @@ class WAF
 			$ruleMatches[] = self::USER_AGENT_RULE;
 		}
 
-		if ( preg_match( "/(<|<.)[^>]*(" . self::XSS_FILTER . ")[^>]*>/i", $queryString, $matches ) ) {
-			$ruleMatches[] = self::XSS_QUERY_STRING_RULE;
-		}
+		foreach( $filterables as $filterable ) {
+			if ( preg_match( "/(<|<.)[^>]*(" . self::XSS_FILTER . ")[^>]*>/i", $filterable, $matches ) ) {
+				$ruleMatches[] = self::XSS_QUERY_STRING_RULE;
+			}
 
-		if ( preg_match( "/((\%3c)|(\%3c).)[^(\%3e)]*(" . self::XSS_FILTER . ")[^(\%3e)]*(%3e)/i", $queryString, $matches ) ) {
-			$ruleMatches[] = self::XSS_QUERY_STRING_RULE;
-		}
+			if ( preg_match( "/((\%3c)|(\%3c).)[^(\%3e)]*(" . self::XSS_FILTER . ")[^(\%3e)]*(%3e)/i", $filterable, $matches ) ) {
+				$ruleMatches[] = self::XSS_QUERY_STRING_RULE;
+			}
 
-		if ( preg_match( "/^.*(" . self::TRAVERSAL_FILTER . ").*/i", $queryString, $matches ) ) {
-			$ruleMatches[] = self::TRAVERSAL_RULE;
-		}
+			if ( preg_match( "/^.*(" . self::TRAVERSAL_FILTER . ").*/i", $filterable, $matches ) ) {
+				$ruleMatches[] = self::TRAVERSAL_RULE;
+			}
 
-		if ( preg_match( "/^.*(" . self::REMOTE_FILE_FILTER . ").*/i", $queryString, $matches ) ) {
-			$ruleMatches[] = self::REMOTE_FILE_RULE;
-		}
+			if ( preg_match( "/^.*(" . self::REMOTE_FILE_FILTER . ").*/i", $filterable, $matches ) ) {
+				$ruleMatches[] = self::REMOTE_FILE_RULE;
+			}
 
-		if ( preg_match( "/^.*(" . self::SQL_FILTER . ").*/i", $queryString, $matches ) ) {
-			$ruleMatches[] = self::SQL_RULE;
-		}
-
-		if ( strlen( $_SERVER[ "QUERY_STRING" ] ) > 255 ) {
-			$ruleMatches[] = self::QUERY_STRING_TOOLONG_RULE;
+			if ( preg_match( "/^.*(" . self::SQL_FILTER . ").*/i", $filterable, $matches ) ) {
+				$ruleMatches[] = self::SQL_RULE;
+			}
 		}
 
 		return $ruleMatches;

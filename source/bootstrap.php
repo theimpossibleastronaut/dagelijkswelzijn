@@ -7,7 +7,7 @@
 			require_once( $path );
 			return true;
 		} else {
-			throw new Exception( "Unable to load requested class '" . $className . "' by looking at '" . $path . "'" );
+			throw new \Exception( "Unable to load requested class '" . $className . "' by looking at '" . $path . "'" );
 		}
 
 		return false;

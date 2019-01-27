@@ -45,7 +45,7 @@ class Controller
 		$route = $this->router->getRouteForPath( $path );
 
 		if ( is_null( $route ) ) {
-			throw new Exception( 'Missing route to handle \'' . $path . '\'' );
+			throw new \Exception( 'Missing route to handle \'' . $path . '\'' );
 		}
 
 		$view = $this->router->create( $route );
