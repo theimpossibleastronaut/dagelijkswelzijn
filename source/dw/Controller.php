@@ -10,20 +10,31 @@ class Controller
 	public static $storagePath = null;
 	public static $cachePath = null;
 
-	private $router;
+	private $router = null;
 	public function getRouter(): Router { return $this->router; }
+
+	private $waf = null;
+	public function getWAF(): WAF { return $this->waf; }
 
 	function __construct() {
 		self::$templatePath = realpath( '../template/' );
 		self::$storagePath = realpath( '../storage/' );
 		self::$cachePath = realpath( '../cache/' );
 
-		$this->router = new Router();
-		$this->router->addRoute( '/', 'HomeView', 100 )
-					 ->addRoute( '/login', 'LoginView' )
-		;
+		$this->router = new Router;
+		$this->waf = new WAF;
 
-		$this->route( $_SERVER[ 'REQUEST_URI' ] );
+		// If we suspect bad behaviour block all routing
+		if ( $this->waf->getIsBlocked() ) {
+			$this->router->addRoute( '/blocked', 'WAFView', 1 );
+			$this->route( '/blocked' );
+		} else {
+			$this->router->addRoute( '/', 'HomeView', 100 )
+						 ->addRoute( '/login', 'LoginView' )
+			;
+
+			$this->route( $_SERVER[ 'REQUEST_URI' ] );
+		}
 	}
 
 	/**

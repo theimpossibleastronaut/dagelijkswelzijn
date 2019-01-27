@@ -4,9 +4,10 @@ namespace dw;
 class View
 {
 	protected $template = null;
+	protected $baseTemplate = 'base';
 
 	function __construct() {
-		$this->template = new Template( 'base' );
+		$this->template = new Template( $this->baseTemplate );
 	}
 
 	public function render(): string {
