@@ -3,7 +3,7 @@ namespace dw\view;
 
 class HomeView extends \dw\View {
 	function __construct() {
-
+		parent::__construct();
 	}
 }
 ?>

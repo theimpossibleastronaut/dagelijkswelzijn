@@ -3,12 +3,14 @@ namespace dw;
 
 class View
 {
-	function __construct() {
+	protected $template = null;
 
+	function __construct() {
+		$this->template = new Template( 'base' );
 	}
 
 	public function render(): string {
-		return get_called_class();
+		return $this->template->render();
 	}
 }
 ?>
