@@ -8,7 +8,7 @@ The name is Dutch, and for now my focus lies with friends and peers, but there w
 
 ## Technology
 
-The service would be as simple as that I can make it without sacrificing for security. All tech is written in PHP and should adhere to modern standords. I will take all steps possible to my knowledge to keep your data secure.
+The service would be as simple as that I can make it without sacrificing for security. All tech is written in PHP and should adhere to modern standards. I will take all steps possible to my knowledge to keep your data secure.
 
 For now this service should be git clonable and be runnable by pointing some kind of webserver to the public_html folder. Data storage is outside of the public_html so make sre your webserver can access this.
 
