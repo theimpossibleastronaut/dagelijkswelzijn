@@ -20,13 +20,12 @@ class TranslateAction implements ITemplateAction {
 	 */
 	public function parse( \DOMElement $node ): string {
 
-		// @TODO implement gettext everywhere
-		$translatedString = implode(
+		$translatedString = gettext( implode(
 			array_map(
 				[ $node->ownerDocument, 'saveXML' ],
 				iterator_to_array( $node->childNodes )
 			)
-		);
+		) );
 
 		$nodeType = 'span';
 
