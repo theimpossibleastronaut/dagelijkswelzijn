@@ -18,6 +18,14 @@ msgstr ""
 msgid "Body!"
 msgstr ""
 
+#: base.html:5@dw:translate:placeholder
+msgid "Untranslated attribute"
+msgstr ""
+
+#: base.html:5@dw:translate:value
+msgid "My value"
+msgstr ""
+
 #: head.html:4
 msgid "Dagelijks Welzijn"
 msgstr ""

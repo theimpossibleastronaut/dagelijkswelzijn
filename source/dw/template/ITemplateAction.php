@@ -16,5 +16,13 @@ interface ITemplateAction {
 	 * @return string
 	 */
 	function parse( \DOMElement $node ): string;
+
+	/**
+	 * Parse an attribute
+	 * @param  \string $attributeName
+	 * @param  \string $attributeValue
+	 * @return string
+	 */
+	function parseAttribute( string $attributeName, string $attributeValue ): string;
 }
 ?>

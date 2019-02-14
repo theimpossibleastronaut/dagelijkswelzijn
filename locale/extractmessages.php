@@ -56,12 +56,33 @@ msgstr ""
 			$this->processNode( $node, $fi );
 		}
 
+		$xp = new \DOMXPath( $doc );
+		foreach ( $xp->query('//*[@*[contains(name(), "dw:")]]') as $node ) {
+			foreach ( $node->attributes as $k => $v ) {
+				if ( substr( $k, 0, 3 ) === 'dw:' ) {
+					$parts = explode( ':', $k );
+
+					if ( count( $parts ) > 2 ) {
+						$this->processAttribute( $node, $fi, $k, $v->textContent );
+					}
+				}
+			}
+		}
+
 	}
 
 	protected function processNode( \DOMNode $node, \SplFileInfo $fi ): void {
 
 		$this->output .= '#: ' . $fi->getFilename() . ':' . $node->getLineNo() . PHP_EOL;
 		$this->output .= 'msgid "' . $this->escape( $node->nodeValue ) . '"' . PHP_EOL;
+		$this->output .= 'msgstr ""' . PHP_EOL . PHP_EOL;
+
+	}
+
+	protected function processAttribute( \DOMNode $node, \SplFileInfo $fi, string $attribute, string $value ): void {
+
+		$this->output .= '#: ' . $fi->getFilename() . ':' . $node->getLineNo() . "@" . $attribute . PHP_EOL;
+		$this->output .= 'msgid "' . $this->escape( $value ) . '"' . PHP_EOL;
 		$this->output .= 'msgstr ""' . PHP_EOL . PHP_EOL;
 
 	}

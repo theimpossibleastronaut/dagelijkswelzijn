@@ -58,6 +58,41 @@ class Template
 				}
 			}
 		}
+
+		foreach ( $xp->query('//*[@*[contains(name(), "dw:")]]') as $dwNode ) {
+			$attrPairs = [];
+			foreach ( $dwNode->attributes as $k => $v ) {
+				if ( substr( $k, 0, 3 ) === 'dw:' ) {
+					$parts = explode( ':', $k );
+
+					if ( count( $parts ) > 2 ) {
+						$ns = array_shift( $parts );
+						$action = array_shift( $parts );
+						$attr = implode( ':', $parts );
+						$content = $v->textContent;
+
+						$attrOutput = null;
+
+						$className = "\\dw\\template\\" . ucfirst( $action ) . "Action";
+
+						if ( class_exists( $className ) ) {
+							$action = new $className;
+							$attrOutput = $action->parseAttribute( $attr, $content );
+						}
+
+						if ( !is_null( $attrOutput ) ) {
+							// Store pair, because we shouldn't modify attributes while looping
+							$attrPairs[ $k ] = [ $attr, $attrOutput ];
+						}
+					}
+				}
+			}
+
+			foreach ( $attrPairs as $old => $new ) {
+				$dwNode->removeAttribute( $old );
+				$dwNode->setAttribute( $new[ 0 ], $new[ 1 ] );
+			}
+		}
 	}
 
 	/**

@@ -47,5 +47,16 @@ class TranslateAction implements ITemplateAction {
 		return $outnode;
 	}
 
+	/**
+	 * Parse an attribute
+	 * @param  \string $attributeName
+	 * @param  \string $attributeValue
+	 * @return string
+	 */
+	public function parseAttribute( string $attributeName, string $attributeValue ): string {
+		var_dump(gettext( $attributeValue ));
+		return gettext( $attributeValue );
+	}
+
 }
 ?>

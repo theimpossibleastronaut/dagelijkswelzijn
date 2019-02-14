@@ -24,5 +24,15 @@ class PartialAction implements ITemplateAction {
 		return null;
 	}
 
+	/**
+	 * Parse an attribute
+	 * @param  \string $attributeName
+	 * @param  \string $attributeValue
+	 * @return string
+	 */
+	public function parseAttribute( string $attributeName, string $attributeValue ): string {
+		return $attributeValue;
+	}
+
 }
 ?>

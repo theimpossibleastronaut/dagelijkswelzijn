@@ -4,22 +4,30 @@
 #
 msgid ""
 msgstr ""
+"Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: translations@sexybiggetje.nl\n"
-"PO-Revision-Date: 2019-01-31 21:53+0100\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2019-02-14 21:41+0100\n"
+"Last-Translator: Martijn de Boer <translations@sexybiggetje.nl>\n"
 "Language-Team: \n"
+"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Project-Id-Version: \n"
-"POT-Creation-Date: \n"
 "X-Generator: Poedit 2.2.1\n"
-"Last-Translator: Martijn de Boer <translations@sexybiggetje.nl>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"Language: en\n"
 
 #: base.html:4
 msgid "Body!"
 msgstr "Body!"
+
+#: base.html:5@dw:translate:placeholder
+msgid "Untranslated attribute"
+msgstr "Untranslated attribute"
+
+#: base.html:5@dw:translate:value
+msgid "My value"
+msgstr "My value"
 
 #: head.html:4
 msgid "Dagelijks Welzijn"
