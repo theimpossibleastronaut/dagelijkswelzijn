@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: translations@sexybiggetje.nl\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-02-14 21:40+0100\n"
+"PO-Revision-Date: 2019-02-14 22:15+0100\n"
 "Last-Translator: Martijn de Boer <translations@sexybiggetje.nl>\n"
 "Language-Team: \n"
 "Language: nl\n"
@@ -18,8 +18,8 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: base.html:4
-msgid "Body!"
-msgstr "Body!"
+msgid "B<b>o</b>dy!"
+msgstr "Lich<b>aa</b>m!"
 
 #: base.html:5@dw:translate:placeholder
 msgid "Untranslated attribute"
@@ -39,3 +39,6 @@ msgid ""
 msgstr ""
 "Dit verzoek is geblokkeerd vanwege slecht verkeer, probeer het later nog "
 "eens."
+
+#~ msgid "Body!"
+#~ msgstr "Body!"

@@ -73,8 +73,15 @@ msgstr ""
 
 	protected function processNode( \DOMNode $node, \SplFileInfo $fi ): void {
 
+		$nodeString = implode(
+			array_map(
+				[ $node->ownerDocument, 'saveXML' ],
+				iterator_to_array( $node->childNodes )
+			)
+		);
+
 		$this->output .= '#: ' . $fi->getFilename() . ':' . $node->getLineNo() . PHP_EOL;
-		$this->output .= 'msgid "' . $this->escape( $node->nodeValue ) . '"' . PHP_EOL;
+		$this->output .= 'msgid "' . $this->escape( $nodeString ) . '"' . PHP_EOL;
 		$this->output .= 'msgstr ""' . PHP_EOL . PHP_EOL;
 
 	}

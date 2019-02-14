@@ -15,7 +15,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: base.html:4
-msgid "Body!"
+msgid "B<b>o</b>dy!"
 msgstr ""
 
 #: base.html:5@dw:translate:placeholder

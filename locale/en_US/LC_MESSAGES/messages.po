@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: translations@sexybiggetje.nl\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-02-14 21:41+0100\n"
+"PO-Revision-Date: 2019-02-14 22:17+0100\n"
 "Last-Translator: Martijn de Boer <translations@sexybiggetje.nl>\n"
 "Language-Team: \n"
 "Language: en\n"
@@ -18,8 +18,8 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: base.html:4
-msgid "Body!"
-msgstr "Body!"
+msgid "B<b>o</b>dy!"
+msgstr "B<b>o</b>dy!"
 
 #: base.html:5@dw:translate:placeholder
 msgid "Untranslated attribute"
@@ -36,3 +36,6 @@ msgstr "Daily Wellbeing"
 #: waf.html:3
 msgid "This request has been blocked due to bad traffic, please try again later."
 msgstr "This request has been blocked due to bad traffic, please try again later."
+
+#~ msgid "Body!"
+#~ msgstr "Body!"
