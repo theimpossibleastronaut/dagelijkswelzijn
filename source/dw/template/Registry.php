@@ -19,12 +19,36 @@ class Registry {
 	 */
 	public static $javascript = [];
 
+	/**
+	 * Add a style to the registry
+	 * @param  string $source stylesheet path
+	 */
 	public static function registerStyle( string $source ): void {
 		self::$stylesheet[] = $source;
 	}
 
+	/**
+	 * Add a scriptto the registry
+	 * @param  string $source script path
+	 */
 	public static function registerScript( string $source ): void {
 		self::$javascript[] = $source;
+	}
+
+	/**
+	 * Get a unique list of all the stylesheets
+	 * @return array
+	 */
+	public static function getStyles(): array {
+		return array_unique( self::$stylesheets );
+	}
+
+	/**
+	 * Get a unique list of all the scripts
+	 * @return array
+	 */
+	public static function getScripts(): array {
+		return array_unique( self::$javascript );
 	}
 
 }

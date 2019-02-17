@@ -57,7 +57,10 @@ class Controller
 		}
 
 		$view = $this->router->create( $route );
-		echo $view->render();
+		$view->lazyLoad( true );
+		$output = $view->render( false );
+
+		echo $output;
 	}
 }
 ?>

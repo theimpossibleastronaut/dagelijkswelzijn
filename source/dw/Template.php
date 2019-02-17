@@ -9,6 +9,12 @@ class Template
 
 	public $doc = null;
 
+	/**
+	 * Array containing nodes that should be parsed as late as possible.
+	 * @var array containing \dw\template\LazyLoadable
+	 */
+	public static $lazyLoadables = [];
+
 	function __construct( string $templateName ) {
 		$templatePath = Controller::$templatePath . DIRECTORY_SEPARATOR . $templateName . ".html";
 
@@ -35,44 +41,7 @@ class Template
 		$xp = new \DOMXPath( $this->doc );
 		foreach( $xp->query('//*[starts-with(name(), "dw:")]') as $dwNode ) {
 			if ( isset( $dwNode->parentNode ) ) {
-				$nodeOutput = null;
-
-				$className = "\\dw\\template\\" . ucfirst( substr( $dwNode->nodeName, 3) ) . "Action";
-
-				if ( class_exists( $className ) ) {
-					$action = new $className;
-					$nodeOutput = $action->parse( $dwNode );
-				}
-
-				if ( !is_null( $nodeOutput ) && is_string( $nodeOutput ) && !empty( $nodeOutput ) ) {
-					$lDoc = new \DOMDocument( '1.0', 'utf-8' );
-					$lDoc->loadXML(
-						$nodeOutput,
-						LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_NOENT | LIBXML_NOXMLDECL | LIBXML_PEDANTIC |
-						LIBXML_NOERROR | LIBXML_NOWARNING /* Allow us to load prefixed tags without warning */
-					);
-
-					if ( !is_null( $lDoc ) && !is_null( $lDoc->documentElement ) ) {
-						$dwNode->parentNode->replaceChild( $this->doc->importNode( $lDoc->documentElement, true ), $dwNode );
-					}
-				} else if ( !is_null( $nodeOutput ) && is_array( $nodeOutput ) ) {
-					foreach ( $nodeOutput as $newNode ) {
-						$lDoc = new \DOMDocument( '1.0', 'utf-8' );
-						$lDoc->loadXML(
-							$newNode,
-							LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_NOENT | LIBXML_NOXMLDECL | LIBXML_PEDANTIC |
-							LIBXML_NOERROR | LIBXML_NOWARNING /* Allow us to load prefixed tags without warning */
-						);
-
-						if ( !is_null( $lDoc ) && !is_null( $lDoc->documentElement ) ) {
-							$dwNode->parentNode->insertBefore( $this->doc->importNode( $lDoc->documentElement, true ), $dwNode );
-						}
-					}
-
-					$dwNode->parentNode->removeChild( $dwNode );
-				} else {
-					$dwNode->parentNode->removeChild( $dwNode );
-				}
+				$this->parseNode( $dwNode, $this->doc );
 			}
 		}
 
@@ -122,6 +91,77 @@ class Template
 		}
 
 		return ( $returnHTML === true ) ? $this->doc->saveHTML() : $this->doc->saveXML();
+	}
+
+	/**
+	 * Load all remaining LazyLoadables
+	 */
+	public function lazyLoad( bool $parse = true ): void {
+		if ( $parse === true ) {
+			$this->parse();
+		}
+
+		foreach ( self::$lazyLoadables as $lazyLoadable ) {
+			// Todo new XPath query in current doc, find matching lazyLoadable and implement that here.
+			// Because parseNode wont replace it properly yet.
+			$this->parseNode( $lazyLoadable->node, $lazyLoadable->document, true );
+		}
+	}
+
+	protected function parseNode( \DOMNode $dwNode, \DOMDocument $document, bool $skipLazyLoading = false ) {
+		$nodeOutput = null;
+
+		$className = "\\dw\\template\\" . ucfirst( substr( $dwNode->nodeName, 3) ) . "Action";
+
+		if ( class_exists( $className ) ) {
+			$action = new $className;
+
+			if ( !$skipLazyLoading && $action instanceof \dw\template\IIsLazyLoaded ) {
+				$llHash = "ll-" . rand();
+				$dwNode->setAttribute( "lazyload", $llHash );
+
+				$lazyLoadable = new template\LazyLoadable();
+				$lazyLoadable->action = $action;
+				$lazyLoadable->node = $dwNode;
+				$lazyLoadable->hash = $llHash;
+				$lazyLoadable->document = $this->doc;
+
+				self::$lazyLoadables[] = $lazyLoadable;
+				return;
+			}
+
+			$nodeOutput = $action->parse( $dwNode );
+		}
+
+		if ( !is_null( $nodeOutput ) && is_string( $nodeOutput ) && !empty( $nodeOutput ) ) {
+			$lDoc = new \DOMDocument( '1.0', 'utf-8' );
+			$lDoc->loadXML(
+				$nodeOutput,
+				LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_NOENT | LIBXML_NOXMLDECL | LIBXML_PEDANTIC |
+				LIBXML_NOERROR | LIBXML_NOWARNING /* Allow us to load prefixed tags without warning */
+			);
+
+			if ( !is_null( $lDoc ) && !is_null( $lDoc->documentElement ) ) {
+				$dwNode->parentNode->replaceChild( $document->importNode( $lDoc->documentElement, true ), $dwNode );
+			}
+		} else if ( !is_null( $nodeOutput ) && is_array( $nodeOutput ) ) {
+			foreach ( $nodeOutput as $newNode ) {
+				$lDoc = new \DOMDocument( '1.0', 'utf-8' );
+				$lDoc->loadXML(
+					$newNode,
+					LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_NOENT | LIBXML_NOXMLDECL | LIBXML_PEDANTIC |
+					LIBXML_NOERROR | LIBXML_NOWARNING /* Allow us to load prefixed tags without warning */
+				);
+
+				if ( !is_null( $lDoc ) && !is_null( $lDoc->documentElement ) ) {
+					$dwNode->parentNode->insertBefore( $document->importNode( $lDoc->documentElement, true ), $dwNode );
+				}
+			}
+
+			$dwNode->parentNode->removeChild( $dwNode );
+		} else {
+			$dwNode->parentNode->removeChild( $dwNode );
+		}
 	}
 }
 ?>

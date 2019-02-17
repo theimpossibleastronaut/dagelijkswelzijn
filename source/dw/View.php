@@ -10,8 +10,12 @@ class View
 		$this->template = new Template( $this->baseTemplate );
 	}
 
-	public function render(): string {
-		return $this->template->render();
+	public function render( bool $parse = true, bool $returnHTML = true ): string {
+		return $this->template->render( $parse, $returnHTML );
+	}
+
+	public function lazyLoad( bool $parse = true ): void {
+		$this->template->lazyLoad( $parse );
 	}
 }
 ?>

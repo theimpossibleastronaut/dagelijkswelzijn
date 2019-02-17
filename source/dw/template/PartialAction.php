@@ -16,9 +16,21 @@ class PartialAction implements ITemplateAction {
 	 */
 	public function parse( \DOMElement $node ) {
 		if ( $node->hasAttribute( 'src' ) ) {
-			$attr = (string) $node->getAttribute( 'src' );
-			$template = new \dw\Template( $attr );
-			return $template->render( true, false );
+			$src = (string) $node->getAttribute( 'src' );
+			$template = new \dw\Template( $src );
+			$output = $template->render( true, false );
+
+			if ( $node->hasAttribute( 'stylesheet' ) ) {
+				$attr = (string) $node->getAttribute( 'stylesheet' );
+				Registry::registerStyle( empty( $attr ) ? $src : $attr );
+			}
+
+			if ( $node->hasAttribute( 'javascript' ) ) {
+				$attr = (string) $node->getAttribute( 'javascript' );
+				Registry::registerScript( empty( $attr ) ? $src : $attr );
+			}
+
+			return $output;
 		}
 
 		return null;

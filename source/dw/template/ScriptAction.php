@@ -5,7 +5,7 @@ namespace dw\template;
 /**
  * Print out all scripts
  */
-class ScriptAction implements ITemplateAction {
+class ScriptAction implements ITemplateAction, IIsLazyLoaded {
 
 	function __construct() {}
 

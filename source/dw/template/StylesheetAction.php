@@ -5,7 +5,7 @@ namespace dw\template;
 /**
  * Print out all stylesheets
  */
-class StylesheetAction implements ITemplateAction {
+class StylesheetAction implements ITemplateAction, IIsLazyLoaded {
 
 	function __construct() {}
 
