@@ -16,9 +16,9 @@ class TranslateAction implements ITemplateAction {
 	/**
 	 * Parse this action and return it's output as string
 	 * @param  \DOMElement $node Input node
-	 * @return string
+	 * @return string|array
 	 */
-	public function parse( \DOMElement $node ): string {
+	public function parse( \DOMElement $node ) {
 
 		$translatedString = gettext( implode(
 			array_map(

@@ -24,11 +24,19 @@ class Controller
 		$this->router = new Router;
 		$this->waf = new WAF;
 
+		Template\Registry::registerStyle( 'variables.css' );
+
 		// If we suspect bad behaviour block all routing
 		if ( $this->waf->getIsBlocked() ) {
+			Template\Registry::registerStyle( 'blocked.css' );
+
 			$this->router->addRoute( '/blocked', 'WAFView', 1 );
 			$this->route( '/blocked' );
 		} else {
+			Template\Registry::registerStyle( 'app.css' );
+			Template\Registry::registerScript( 'app.js' );
+
+
 			$this->router->addRoute( '/', 'HomeView', 100 )
 						 ->addRoute( '/login', 'LoginView' )
 			;

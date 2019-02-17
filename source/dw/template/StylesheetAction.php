@@ -3,9 +3,9 @@
 namespace dw\template;
 
 /**
- * Allows us to include other Template files by using the dw:partial tag
+ * Print out all stylesheets
  */
-class PartialAction implements ITemplateAction {
+class StylesheetAction implements ITemplateAction {
 
 	function __construct() {}
 
@@ -15,13 +15,14 @@ class PartialAction implements ITemplateAction {
 	 * @return string|array
 	 */
 	public function parse( \DOMElement $node ) {
-		if ( $node->hasAttribute( 'src' ) ) {
-			$attr = (string) $node->getAttribute( 'src' );
-			$template = new \dw\Template( $attr );
-			return $template->render( true, false );
+
+		$output = [];
+
+		foreach ( Registry::$stylesheet as $member ) {
+			$output[] = "<link rel='stylesheet' href='/css/" . $member . "' />";
 		}
 
-		return null;
+		return $output;
 	}
 
 	/**

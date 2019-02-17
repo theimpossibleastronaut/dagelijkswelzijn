@@ -44,7 +44,7 @@ class Template
 					$nodeOutput = $action->parse( $dwNode );
 				}
 
-				if ( !is_null( $nodeOutput ) ) {
+				if ( !is_null( $nodeOutput ) && is_string( $nodeOutput ) && !empty( $nodeOutput ) ) {
 					$lDoc = new \DOMDocument( '1.0', 'utf-8' );
 					$lDoc->loadXML(
 						$nodeOutput,
@@ -52,7 +52,24 @@ class Template
 						LIBXML_NOERROR | LIBXML_NOWARNING /* Allow us to load prefixed tags without warning */
 					);
 
-					$dwNode->parentNode->replaceChild( $this->doc->importNode( $lDoc->documentElement, true ), $dwNode );
+					if ( !is_null( $lDoc ) && !is_null( $lDoc->documentElement ) ) {
+						$dwNode->parentNode->replaceChild( $this->doc->importNode( $lDoc->documentElement, true ), $dwNode );
+					}
+				} else if ( !is_null( $nodeOutput ) && is_array( $nodeOutput ) ) {
+					foreach ( $nodeOutput as $newNode ) {
+						$lDoc = new \DOMDocument( '1.0', 'utf-8' );
+						$lDoc->loadXML(
+							$newNode,
+							LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_NOENT | LIBXML_NOXMLDECL | LIBXML_PEDANTIC |
+							LIBXML_NOERROR | LIBXML_NOWARNING /* Allow us to load prefixed tags without warning */
+						);
+
+						if ( !is_null( $lDoc ) && !is_null( $lDoc->documentElement ) ) {
+							$dwNode->parentNode->insertBefore( $this->doc->importNode( $lDoc->documentElement, true ), $dwNode );
+						}
+					}
+
+					$dwNode->parentNode->removeChild( $dwNode );
 				} else {
 					$dwNode->parentNode->removeChild( $dwNode );
 				}

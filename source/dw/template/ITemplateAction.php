@@ -13,9 +13,9 @@ interface ITemplateAction {
 	/**
 	 * Parse this action and return it's output as string
 	 * @param  \DOMElement $node Input node
-	 * @return string
+	 * @return string|DOMNode
 	 */
-	function parse( \DOMElement $node ): string;
+	function parse( \DOMElement $node );
 
 	/**
 	 * Parse an attribute
